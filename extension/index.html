@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Page Chatter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --surface-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-gradient);
+            width: 400px;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: var(--text-main);
+            /* Prevent scrolling on the body, let the container handle it if needed */
+            overflow-x: hidden; 
+        }
+
+        /* Main Card Container */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Header Section */
+        header {
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            margin-bottom: 4px;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* URL Display */
+        .url-container {
+            background: var(--surface-color);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .url-icon {
+            width: 16px;
+            height: 16px;
+            color: #6366f1;
+            flex-shrink: 0;
+        }
+
+        #url-display {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-family: monospace;
+        }
+
+        /* Inputs */
+        .input-group {
+            position: relative;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 14px;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            resize: none; /* No resizing to keep UI clean */
+            min-height: 100px;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+            outline: none;
+            background: #fff;
+        }
+
+        textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        textarea::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Button */
+        button {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Response Area */
+        .response-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0; /* Hidden initially, JS logic will populate it */
+            animation: fadeIn 0.5s forwards;
+            animation-delay: 0.2s; /* Small delay */
+        }
+
+        .response-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            font-weight: 700;
+        }
+
+        #response-area {
+            background: #fff;
+            padding: 16px;
+            border-radius: 12px;
+            border-left: 4px solid #6366f1; /* Accent border */
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-main);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Scrollbar Styling */
+        #response-area::-webkit-scrollbar {
+            width: 6px;
+        }
+        #response-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #response-area::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <header>
+            <h1>Website Assistant</h1>
+            <div class="subtitle">Ask anything about this page</div>
+        </header>
+
+        <div class="url-container" title="Current Page URL">
+            <svg class="url-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            <div id="url-display">Detecting URL...</div>
+        </div>
+
+        <div class="input-group">
+            <textarea id="prompt-input" placeholder="e.g. Summarize this article for me..."></textarea>
+        </div>
+
+        <button id="send-button">
+            <span>Ask AI</span>
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+        </button>
+        
+        <div class="response-container">
+            <div class="response-label">AI Response</div>
+            <div id="response-area">Your answer will appear here...</div>
+        </div>
+    </div>
+
+    <!-- Required script logic -->
+    <script src="popup.js"></script>
+
+</body>
+</html>
