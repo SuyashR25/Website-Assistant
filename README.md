@@ -175,22 +175,6 @@ The extension requires:
 - Ensure you have sufficient API quota
 - Check backend console for error messages
 
-## Development
-
-### Running Tests
-
-```bash
-cd backend
-python test.py
-```
-
-### Debugging the Extension
-
-1. Open `chrome://extensions/`
-2. Find "Website Assistant" and click **Details**
-3. Click **Inspect views: background page** for debugging
-
-
 ## License
 
 MIT License - Feel free to use and modify this project.
